@@ -12,11 +12,18 @@
           v-model="searchPhrase"
           type="text"
           placeholder="pokemon name"
+          @input="resetPage"
       >
       <Results
-          :resultsList="pokemonArray"
+          :resultsList="displayArray"
           :currentPage="currentPage"
           :resultsPerPage="resultsPerPage"
+      />
+      <Pagination
+          :currentPage="currentPage"
+          :lastPage="lastPage"
+          @reduce-page="previousPage"
+          @increase-page="nextPage"
       />
     </div>
   </div>
@@ -24,6 +31,7 @@
 
 <script>
 import Results from './Results';
+import Pagination from './Pagination';
 import axios from 'axios';
 
 const url = 'https://pokeapi.co/api/v2/';
@@ -31,7 +39,8 @@ const url = 'https://pokeapi.co/api/v2/';
 export default {
   name: 'Main',
   components: {
-    Results
+    Results,
+    Pagination
   },
   data () {
     return {
@@ -40,6 +49,17 @@ export default {
       currentPage: 0,
       resultsPerPage: 50
     };
+  },
+  computed: {
+    lastPage () {
+      return Math.ceil(this.pokemonArray.length / this.resultsPerPage);
+    },
+    displayArray () {
+      if (this.searchPhrase !== '') {
+        return this.pokemonArray.filter(pokemon => pokemon.name.includes(this.searchPhrase));
+      }
+      return this.pokemonArray;
+    }
   },
   mounted () {
     const self = this;
@@ -51,6 +71,17 @@ export default {
       .catch(e => {
         console.log(e);
       });
+  },
+  methods: {
+    nextPage () {
+      this.currentPage += 1;
+    },
+    previousPage () {
+      this.currentPage -= 1;
+    },
+    resetPage () {
+      this.currentPage = 0;
+    }
   }
 };
 </script>
