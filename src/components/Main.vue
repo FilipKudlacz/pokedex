@@ -146,28 +146,6 @@ export default {
       width: 100vw;
       background-color: black;
     }
-
-    // .pokeball {
-    //   position: absolute;
-    //   width: 120px;
-    //   height: 120px;
-    //   background-color: black;
-    //   border-radius: 50%;
-    //   left: calc(50vw - 60px);
-    //   top: 200px;
-
-    //   &::after {
-    //     position: absolute;
-    //     top: 30px;
-    //     left: 30px;
-    //     content: '';
-    //     width: 60px;
-    //     height: 60px;
-    //     background-color: white;
-    //     border-radius: 50%;
-    //     z-index: 2;
-    //   }
-    // }
   }
   .main-container {
     width: 100vw;

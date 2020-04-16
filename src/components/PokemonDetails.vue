@@ -39,6 +39,7 @@ export default {
   width: 300px;
   background-color: #3B4CCA;
   color: white;
+  border-radius: 5px;
 
   h1, h3 {
     margin-bottom: 10px;
