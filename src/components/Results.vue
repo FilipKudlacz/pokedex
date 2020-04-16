@@ -19,10 +19,6 @@ export default {
     currentPage: Number,
     resultsPerPage: Number
   },
-  data () {
-    return ({
-    });
-  },
   computed: {
     currentlyDisplayed () {
       return this.resultsList.slice(this.currentPage * this.resultsPerPage,

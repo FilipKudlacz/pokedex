@@ -14,6 +14,12 @@
           placeholder="pokemon name"
           @input="resetPage"
       >
+      <hr>
+      <TypeFilters
+          @filter-by-type="filterByType"
+          @reset="resetPokemonArray"
+      />
+      <hr>
       <Pagination
           :currentPage="currentPage"
           :lastPage="lastPage"
@@ -46,6 +52,7 @@
 import Results from './Results';
 import Pagination from './Pagination';
 import PokemonDetails from './PokemonDetails';
+import TypeFilters from './TypeFilters';
 
 import Pokemon from './../pokemon';
 import axios from 'axios';
@@ -57,7 +64,8 @@ export default {
   components: {
     Results,
     Pagination,
-    PokemonDetails
+    PokemonDetails,
+    TypeFilters
   },
   data () {
     return {
@@ -66,7 +74,7 @@ export default {
       currentPage: 0,
       resultsPerPage: 50,
       isDetailsShown: false,
-      selectedPokemon: ''
+      selectedPokemon: {}
     };
   },
   computed: {
@@ -81,15 +89,7 @@ export default {
     }
   },
   mounted () {
-    const self = this;
-
-    axios.get(url + 'pokemon/?offset=0&limit=964')
-      .then(res => {
-        this.pokemonArray = res.data.results;
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    this.resetPokemonArray();
   },
   methods: {
     nextPage () {
@@ -114,13 +114,35 @@ export default {
             res.data.species,
             res.data.weight
           );
-          console.log(this.selectedPokemon);
         })
         .catch(e => {
           console.log(e);
         });
 
       this.isDetailsShown = true;
+    },
+    filterByType (type) {
+      axios.get(type)
+        .then(res => {
+          this.pokemonArray = [];
+          res.data.pokemon.forEach(pokemon => {
+            this.pokemonArray.push(pokemon.pokemon);
+          });
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    resetPokemonArray () {
+      const self = this;
+
+      axios.get(url + 'pokemon/?offset=0&limit=964')
+        .then(res => {
+          this.pokemonArray = res.data.results;
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
   }
 };
@@ -143,17 +165,17 @@ export default {
       top: 30vh;
       left: 0;
       height: 35px;
-      width: 100vw;
+      width: 100%;
       background-color: black;
     }
   }
   .main-container {
-    width: 100vw;
+    width: 100%;
     background-color: white;
     padding-bottom: 20px;
 
     input {
-      margin-top: 140px;
+      margin-top: 100px;
       height: 40px;
       width: 300px;
       font-size: 20px;
@@ -163,6 +185,14 @@ export default {
       &:focus {
         outline: none;
       }
+    }
+
+    hr {
+      margin-top: 15px;
+      width: 95%;
+      height: 2px;
+      border: none;
+      background-color: black;
     }
 
     .upper-pagination {
