@@ -41,7 +41,7 @@ export default {
   width: 250px;
   height: 50px;
   border-radius: 5px;
-  margin-left: calc(50vw - 100px);
+  margin-left: calc(50vw - 125px);
   background-color: #3B4CCA;
   color: white;
 

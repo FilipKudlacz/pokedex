@@ -5,19 +5,27 @@
           alt="Pokemon logo"
           src="./../assets/1200pxlogo.svg.png"
       >
-      <div class="pokeball" />
     </div>
     <div class="main-container">
+      <div class="pokeball" />
       <input
           v-model="searchPhrase"
           type="text"
           placeholder="pokemon name"
           @input="resetPage"
       >
+      <Pagination
+          :currentPage="currentPage"
+          :lastPage="lastPage"
+          @reduce-page="previousPage"
+          @increase-page="nextPage"
+          class="upper-pagination"
+      />
       <Results
           :resultsList="displayArray"
           :currentPage="currentPage"
           :resultsPerPage="resultsPerPage"
+          @open-description="openDescription"
       />
       <Pagination
           :currentPage="currentPage"
@@ -26,12 +34,20 @@
           @increase-page="nextPage"
       />
     </div>
+    <PokemonDetails
+        :pokemon="selectedPokemon"
+        v-if="isDetailsShown"
+        @close-details="isDetailsShown = false"
+    />
   </div>
 </template>
 
 <script>
 import Results from './Results';
 import Pagination from './Pagination';
+import PokemonDetails from './PokemonDetails';
+
+import Pokemon from './../pokemon';
 import axios from 'axios';
 
 const url = 'https://pokeapi.co/api/v2/';
@@ -40,19 +56,22 @@ export default {
   name: 'Main',
   components: {
     Results,
-    Pagination
+    Pagination,
+    PokemonDetails
   },
   data () {
     return {
       searchPhrase: '',
       pokemonArray: [],
       currentPage: 0,
-      resultsPerPage: 50
+      resultsPerPage: 50,
+      isDetailsShown: false,
+      selectedPokemon: ''
     };
   },
   computed: {
     lastPage () {
-      return Math.ceil(this.pokemonArray.length / this.resultsPerPage);
+      return Math.floor(this.pokemonArray.length / this.resultsPerPage);
     },
     displayArray () {
       if (this.searchPhrase !== '') {
@@ -81,6 +100,27 @@ export default {
     },
     resetPage () {
       this.currentPage = 0;
+    },
+    openDescription (pokemon) {
+      const self = this;
+      axios.get(pokemon.url)
+        .then(res => {
+          self.selectedPokemon = new Pokemon(
+            res.data.name,
+            res.data.id,
+            res.data.types,
+            res.data.abilities,
+            res.data.forms,
+            res.data.species,
+            res.data.weight
+          );
+          console.log(this.selectedPokemon);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+
+      this.isDetailsShown = true;
     }
   }
 };
@@ -107,6 +147,51 @@ export default {
       background-color: black;
     }
 
+    // .pokeball {
+    //   position: absolute;
+    //   width: 120px;
+    //   height: 120px;
+    //   background-color: black;
+    //   border-radius: 50%;
+    //   left: calc(50vw - 60px);
+    //   top: 200px;
+
+    //   &::after {
+    //     position: absolute;
+    //     top: 30px;
+    //     left: 30px;
+    //     content: '';
+    //     width: 60px;
+    //     height: 60px;
+    //     background-color: white;
+    //     border-radius: 50%;
+    //     z-index: 2;
+    //   }
+    // }
+  }
+  .main-container {
+    width: 100vw;
+    background-color: white;
+    padding-bottom: 20px;
+
+    input {
+      margin-top: 140px;
+      height: 40px;
+      width: 300px;
+      font-size: 20px;
+      border: solid black;
+      border-width: 0 0 2px 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .upper-pagination {
+      margin: 20px 0;
+      margin-left: calc(50vw - 125px);
+    }
+
     .pokeball {
       position: relative;
       width: 120px;
@@ -114,7 +199,7 @@ export default {
       background-color: black;
       border-radius: 50%;
       left: calc(50vw - 60px);
-      top: -20px;
+      top: -60px;
 
       &::after {
         position: absolute;
@@ -129,20 +214,30 @@ export default {
       }
     }
   }
-  .main-container {
-    width: 100vw;
-    background-color: white;
+}
 
-    input {
-      margin-top: 200px;
-      height: 40px;
-      width: 300px;
-      font-size: 20px;
-      border: solid black;
-      border-width: 0 0 2px 0;
+@media (max-width: 580px) {
+  .app-wrapper {
+    .intro-wrapper {
+      img {
+        height: 20vh;
+      }
+    }
 
-      &:focus {
-        outline: none;
+    .main-container {
+      input {
+        margin-top: 140px;
+        margin-bottom: 70px;
+      }
+    }
+  }
+}
+
+@media (max-width: 470px) {
+  .app-wrapper {
+    .intro-wrapper {
+      img {
+        height: 15vh;
       }
     }
   }

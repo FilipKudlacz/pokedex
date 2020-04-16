@@ -4,6 +4,7 @@
         v-for="result in currentlyDisplayed"
         :key="result.url"
         class="result"
+        @click="$emit('open-description', result)"
     >
       {{ result.name }}
     </div>
