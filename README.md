@@ -1,8 +1,14 @@
 # pokedex
 
+
 ## Project setup
 ```
 npm install
+```
+
+### Project start
+```
+npm start
 ```
 
 ### Compiles and hot-reloads for development
